@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servis Reminder App</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-main: #1a202c;
+            --text-muted: #718096;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0f4f8 100%);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 1rem 1.5rem 1rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #4f46e5, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 1rem 1rem 3rem 1rem;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 580px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            opacity: 0.95;
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Desain Box Hasil Status */
+        .result {
+            margin-top: 2rem;
+            padding: 1.25rem;
+            border-radius: 14px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            font-size: 1.05rem;
+            line-height: 1.5;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .alert-danger {
+            background-color: var(--danger-bg);
+            color: #b91c1c;
+            border: 1px solid #fee2e2;
+        }
+
+        .alert-success {
+            background-color: var(--success-bg);
+            color: #047857;
+            border: 1px solid #d1fae5;
+        }
+
+        /* Desain Box Checklist Komponen */
+        .checklist-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        .checklist-box h4 {
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 0.5rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.85rem;
+            font-size: 0.95rem;
+            color: #334155;
+            padding: 0.5rem 0;
+        }
+
+        .checklist-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .checklist-item .badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 0.25rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-right: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .checklist-item .badge-safe {
+            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+        }
+
+        .checklist-item-text strong {
+            color: var(--text-main);
+        }
+
+        .checklist-item-text p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 0.15rem;
+        }
+
+        footer {
+            background: transparent;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Servis Reminder</h1>
+        <p>Asisten Digital Perawatan Motor Anda</p>
+    </header>
+
+    <main>
+        <div class="container">
+            <form id="reminderForm">
+                <div class="form-group">
+                    <label for="jenisKendaraan">Jenis Kendaraan</label>
+                    <select id="jenisKendaraan" required>
+                        <option value="" disabled selected>-- Pilih Jenis Motor --</option>
+                        <option value="matic">Motor Matic (Otomatis)</option>
+                        <option value="gigi">Motor Bebek (Manual / Gigi)</option>
+                        <option value="kopling">Motor Kopling (Sport / Manual)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="kmTerakhir">KM Servis Terakhir</label>
+                    <input type="number" id="kmTerakhir" required placeholder="Contoh: 12000" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="kmSekarang">KM Sekarang</label>
+                    <input type="number" id="kmSekarang" required placeholder="Contoh: 14500" min="0">
+                </div>
+
+                <button type="submit">Cek Status Servis</button>
+            </form>
+
+            <div id="resultBox" class="result"></div>
+
+            <div id="checklistBox" class="checklist-box"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Servis Reminder App &bull; Berkendara dengan Aman</p>
+    </footer>
+
+    <script>
+        const aturanKomponen = {
+            matic: [
+                { nama: "Oli Mesin", interval: 2000, ket: "Waktunya ganti oli mesin untuk menjaga performa mesin matic." },
+                { nama: "Oli Gardan (Gear Oil)", interval: 8000, ket: "Ganti oli transmisi matic (Rekomendasi: setiap 2-3 kali ganti oli mesin)." },
+                { nama: "Servis & Pembersihan CVT", interval: 8000, ket: "Bersihkan debu dan kotoran di dalam bak CVT agar akselerasi lancar." },
+                { nama: "Pengecekan V-Belt & Roller", interval: 10000, ket: "Cek keretakan tali kipas/V-Belt serta keausan rumah roller." },
+                { nama: "Ganti V-Belt & Roller Set", interval: 20000, ket: "Ganti total komponen penggerak CVT untuk menghindari putus di jalan." }
+            ],
+            gigi: [
+                { nama: "Oli Mesin & Kopling", interval: 2000, ket: "Ganti oli berkala (oli melumasi ruang mesin sekaligus kopling basah)." },
+                { nama: "Penyetelan Kopling", interval: 2000, ket: "Setel ulang kerenggangan tuas kopling semi-otomatis agar perpindahan gigi mulus." },
+                { nama: "Rantai Roda", interval: 1000, ket: "Cek tingkat kekencangan, bersihkan, lalu berikan pelumas rantai." },
+                { nama: "Gir & Rantai (Sprocket Kit)", interval: 15000, ket: "Ganti satu set gir jika mata roda gir sudah tampak tajam/aus." }
+            ],
+            kopling: [
+                { nama: "Rantai & Gir Motor Sport", interval: 500, ket: "Lumasi dan kencangkan (Torsi mesin sport besar membuat rantai cepat kendur)." },
+                { nama: "Oli Mesin Khusus Sport", interval: 2000, ket: "Wajib ganti oli berkala khusus spesifikasi motor kopling basah." },
+                { nama: "Kabel & Tali Kopling", interval: 2000, ket: "Berikan cairan pelumas kabel agar tarikan tuas ringan dan tidak rawan putus." },
+                { nama: "Kanvas Kopling", interval: 20000, ket: "Lakukan pemeriksaan atau ganti baru jika motor mengalami gejala selip akselerasi." }
+            ]
+        };
+
+        document.getElementById('reminderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const jenisKey = document.getElementById('jenisKendaraan').value;
+            const selectElement = document.getElementById('jenisKendaraan');
+            const namaTeks = selectElement.options[selectElement.selectedIndex].text;
+            
+            const kmTerakhir = parseFloat(document.getElementById('kmTerakhir').value);
+            const kmSekarang = parseFloat(document.getElementById('kmSekarang').value);
+            
+            const resultBox = document.getElementById('resultBox');
+            const checklistBox = document.getElementById('checklistBox');
+
+            const jarakTempuh = kmSekarang - kmTerakhir;
+            const intervalUtama = 2000; 
+            const kmHarusServis = kmTerakhir + intervalUtama;
+            const sisaKm = kmHarusServis - kmSekarang;
+
+            resultBox.style.display = 'block';
+
+            // 1. Alert Status Box Utama
+            if (jarakTempuh >= intervalUtama) {
+                resultBox.className = 'result alert-danger';
+                resultBox.innerHTML = `⚠️ <strong>${namaTeks}</strong> sudah waktunya servis berkala! Anda telah melewati ${jarakTempuh} KM sejak servis terakhir.`;
+            } else {
+                resultBox.className = 'result alert-success';
+                resultBox.innerHTML = `✅ Kondisi <strong>${namaTeks}</strong> terpantau aman. Jadwal ganti oli berikutnya sekitar <strong>${sisaKm} KM</strong> lagi.`;
+            }
+
+            // 2. Pembentukan List Komponen yang Interaktif
+            const daftarPart = aturanKomponen[jenisKey];
+            let htmlChecklist = `<h4>🛠️ Rekomendasi Tindakan Komponen</h4>`;
+            let adaKomponenBerbahaya = false;
+
+            if (daftarPart) {
+                daftarPart.forEach(function(part) {
+                    if (jarakTempuh >= part.interval) {
+                        adaKomponenBerbahaya = true;
+                        htmlChecklist += `
+                            <div class="checklist-item">
+                                <span class="badge">Wajib</span>
+                                <div class="checklist-item-text">
+                                    <strong>${part.nama}</strong>
+                                    <p>${part.ket} <span style="color: #ef4444; font-weight:600;">(Batas per ${part.interval.toLocaleString('id-ID')} KM)</span></p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            // Jika jarak tempuh masih sedikit / aman
+            if (!adaKomponenBerbahaya) {
+                htmlChecklist += `
+                    <div class="checklist-item">
+                        <span class="badge badge-safe">OK</span>
+                        <div class="checklist-item-text">
+                            <strong>Semua Komponen Khusus Masih Aman</strong>
+                            <p>Belum ada komponen tambahan yang melewati batas masa pakai kilometer.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            checklistBox.style.display = 'block';
+            checklistBox.innerHTML = htmlChecklist;
+        });
+    </script>
+</body>
+</html>
